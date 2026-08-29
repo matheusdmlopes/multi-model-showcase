@@ -13,3 +13,9 @@ def test_mixed_straight_curly():
 
 def test_curly_adjacent_to_punctuation():
     assert word_frequencies("“wow!?”") == {"wow": 1}
+
+def test_inner_curly_quotes_preserved():
+    assert word_frequencies("don’t won’t") == {"don’t": 1, "won’t": 1}
+
+def test_multiple_layered_curly_quotes():
+    assert word_frequencies("“‘hello’”") == {"hello": 1}

@@ -1,0 +1,254 @@
+[
+  {
+    "worker_id": "agy_e2b87daf0272",
+    "tool": "delegate_agy",
+    "model": "gemini-3.7-flash-low",
+    "task_type": "implementation",
+    "execution_mode": "accept_edits",
+    "status": "succeeded",
+    "returncode": 0,
+    "duration_seconds": 13.970483065,
+    "num_turns": 1,
+    "usage": {
+      "input_tokens": 95827,
+      "output_tokens": 1318,
+      "thinking_tokens": 0,
+      "cache_read_tokens": 56820,
+      "total_tokens": 97145
+    }
+  },
+  {
+    "worker_id": "agy_e960d39601c1",
+    "tool": "delegate_agy",
+    "model": "gemini-3.7-flash-medium",
+    "task_type": "implementation",
+    "execution_mode": "accept_edits",
+    "status": "succeeded",
+    "returncode": 0,
+    "duration_seconds": 38.27941953,
+    "num_turns": 1,
+    "usage": {
+      "input_tokens": 80293,
+      "output_tokens": 6772,
+      "thinking_tokens": 3331,
+      "cache_read_tokens": 215534,
+      "total_tokens": 87065
+    }
+  },
+  {
+    "worker_id": "agy_bb62e9772f26",
+    "tool": "delegate_agy",
+    "model": "gemini-3.7-flash-high",
+    "task_type": "implementation",
+    "execution_mode": "accept_edits",
+    "status": "succeeded",
+    "returncode": 0,
+    "duration_seconds": 34.253135609,
+    "num_turns": 1,
+    "usage": {
+      "input_tokens": 80630,
+      "output_tokens": 8056,
+      "thinking_tokens": 4826,
+      "cache_read_tokens": 207345,
+      "total_tokens": 88686
+    }
+  },
+  {
+    "worker_id": "agy_5e22823134af",
+    "tool": "delegate_agy",
+    "model": "gemini-3.6-flash-low",
+    "task_type": "implementation",
+    "execution_mode": "accept_edits",
+    "status": "succeeded",
+    "returncode": 0,
+    "duration_seconds": 11.790869744,
+    "num_turns": 1,
+    "usage": {
+      "input_tokens": 52690,
+      "output_tokens": 1551,
+      "thinking_tokens": 0,
+      "cache_read_tokens": 109691,
+      "total_tokens": 54241
+    }
+  },
+  {
+    "worker_id": "agy_c4d525a2cfa8",
+    "tool": "delegate_agy",
+    "model": "gemini-3.6-flash-medium",
+    "task_type": "implementation",
+    "execution_mode": "accept_edits",
+    "status": "succeeded",
+    "returncode": 0,
+    "duration_seconds": 27.65135396,
+    "num_turns": 1,
+    "usage": {
+      "input_tokens": 124119,
+      "output_tokens": 8581,
+      "thinking_tokens": 5258,
+      "cache_read_tokens": 337657,
+      "total_tokens": 132700
+    }
+  },
+  {
+    "worker_id": "agy_01a4e9cc6450",
+    "tool": "delegate_agy",
+    "model": "gemini-3.6-flash-high",
+    "task_type": "implementation",
+    "execution_mode": "accept_edits",
+    "status": "succeeded",
+    "returncode": 0,
+    "duration_seconds": 14.542272385,
+    "num_turns": 1,
+    "usage": {
+      "input_tokens": 52397,
+      "output_tokens": 4859,
+      "thinking_tokens": 3029,
+      "cache_read_tokens": 150427,
+      "total_tokens": 57256
+    }
+  },
+  {
+    "worker_id": "agy_f147f4348122",
+    "tool": "delegate_agy",
+    "model": "gemini-3.5-flash-low",
+    "task_type": "implementation",
+    "execution_mode": "accept_edits",
+    "status": "succeeded",
+    "returncode": 0,
+    "duration_seconds": 15.055116203,
+    "num_turns": 1,
+    "usage": {
+      "input_tokens": 83844,
+      "output_tokens": 3030,
+      "thinking_tokens": 1327,
+      "cache_read_tokens": 129865,
+      "total_tokens": 86874
+    }
+  },
+  {
+    "worker_id": "agy_1f841dac587a",
+    "tool": "delegate_agy",
+    "model": "gemini-3.5-flash-medium",
+    "task_type": "implementation",
+    "execution_mode": "accept_edits",
+    "status": "succeeded",
+    "returncode": 0,
+    "duration_seconds": 25.552840975,
+    "num_turns": 1,
+    "usage": {
+      "input_tokens": 121908,
+      "output_tokens": 9373,
+      "thinking_tokens": 6623,
+      "cache_read_tokens": 186980,
+      "total_tokens": 131281
+    }
+  },
+  {
+    "worker_id": "agy_e35bf642ced5",
+    "tool": "delegate_agy",
+    "model": "gemini-3.5-flash-high",
+    "task_type": "implementation",
+    "execution_mode": "accept_edits",
+    "status": "succeeded",
+    "returncode": 0,
+    "duration_seconds": 39.631372771,
+    "num_turns": 1,
+    "usage": {
+      "input_tokens": 104283,
+      "output_tokens": 13545,
+      "thinking_tokens": 8203,
+      "cache_read_tokens": 467803,
+      "total_tokens": 117828
+    }
+  },
+  {
+    "worker_id": "agy_1b4ed237e6d8",
+    "tool": "delegate_agy",
+    "model": "gemini-3.1-pro-high",
+    "task_type": "implementation",
+    "execution_mode": "accept_edits",
+    "status": "succeeded",
+    "returncode": 0,
+    "duration_seconds": 45.159849122,
+    "num_turns": 1,
+    "usage": {
+      "input_tokens": 51860,
+      "output_tokens": 3414,
+      "thinking_tokens": 1785,
+      "cache_read_tokens": 113376,
+      "total_tokens": 55274
+    }
+  },
+  {
+    "worker_id": "agy_bb388d37151c",
+    "tool": "delegate_agy",
+    "model": "gemini-3.1-pro-low",
+    "task_type": "implementation",
+    "execution_mode": "accept_edits",
+    "status": "succeeded",
+    "returncode": 0,
+    "duration_seconds": 37.717570819,
+    "num_turns": 1,
+    "usage": {
+      "input_tokens": 49545,
+      "output_tokens": 2312,
+      "thinking_tokens": 1214,
+      "cache_read_tokens": 105081,
+      "total_tokens": 51857
+    }
+  },
+  {
+    "worker_id": "agy_72df668ba883",
+    "tool": "delegate_agy",
+    "model": "claude-sonnet-4-6",
+    "task_type": "implementation",
+    "execution_mode": "accept_edits",
+    "status": "succeeded",
+    "returncode": 0,
+    "duration_seconds": 64.757627452,
+    "num_turns": 1,
+    "usage": {
+      "input_tokens": 30155,
+      "output_tokens": 3623,
+      "thinking_tokens": 0,
+      "cache_read_tokens": 180868,
+      "total_tokens": 33778
+    }
+  },
+  {
+    "worker_id": "agy_fa5e04781beb",
+    "tool": "delegate_agy",
+    "model": "claude-opus-4-6-thinking",
+    "task_type": "implementation",
+    "execution_mode": "accept_edits",
+    "status": "succeeded",
+    "returncode": 0,
+    "duration_seconds": 46.732326918,
+    "num_turns": 1,
+    "usage": {
+      "input_tokens": 25019,
+      "output_tokens": 2620,
+      "thinking_tokens": 0,
+      "cache_read_tokens": 113693,
+      "total_tokens": 27639
+    }
+  },
+  {
+    "worker_id": "agy_e86dc47e3b0f",
+    "tool": "delegate_agy",
+    "model": "gpt-oss-120b-medium",
+    "task_type": "implementation",
+    "execution_mode": "accept_edits",
+    "status": "succeeded",
+    "returncode": 0,
+    "duration_seconds": 19.104534916,
+    "num_turns": 1,
+    "usage": {
+      "input_tokens": 120064,
+      "output_tokens": 1953,
+      "thinking_tokens": 0,
+      "cache_read_tokens": 0,
+      "total_tokens": 122017
+    }
+  }
+]

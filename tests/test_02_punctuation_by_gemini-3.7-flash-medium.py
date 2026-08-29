@@ -34,6 +34,14 @@ def test_individual_punctuation_categories():
     }
 
 
+def test_all_defined_punctuation_characters_stripped():
+    """Verify that every single character in PUNCTUATION constant is stripped from token boundaries."""
+    for char in PUNCTUATION:
+        wrapped = f"{char}token{char}"
+        assert word_frequencies(wrapped) == {"token": 1}, f"Failed to strip {char!r} from token"
+        assert word_frequencies(char) == {}, f"Failed to treat standalone punctuation {char!r} as empty"
+
+
 def test_punctuation_position_start_end_both():
     """Verify punctuation stripping at start only, end only, and both start and end."""
     # Punctuation at start only
@@ -65,6 +73,7 @@ def test_all_punctuation_edge_case():
     assert word_frequencies(".,;:!?\"'()[]{}<>“”‘’") == {}
     assert word_frequencies("  ...   ???   !!!   ") == {}
     assert word_frequencies("() [] {} <> \"\" '' “” ‘’") == {}
+    assert word_frequencies(PUNCTUATION) == {}
 
 
 def test_stacked_and_consecutive_punctuation_stripping():
@@ -75,6 +84,24 @@ def test_stacked_and_consecutive_punctuation_stripping():
         "nested": 1,
     }
     assert word_frequencies("“‘double-nested’”") == {"double-nested": 1}
+    assert word_frequencies("<{[((complex-enclosure))]}>") == {"complex-enclosure": 1}
+
+
+def test_internal_punctuation_preserved_while_boundary_stripped():
+    """Verify that leading and trailing punctuation is stripped while internal punctuation is retained."""
+    assert word_frequencies('("don\'t")') == {"don't": 1}
+    assert word_frequencies('"U.S.A."') == {"u.s.a": 1}
+    assert word_frequencies("...state-of-the-art...") == {"state-of-the-art": 1}
+    assert word_frequencies("{key:value}") == {"key:value": 1}
+
+
+def test_isolated_punctuation_tokens_among_words():
+    """Verify standalone punctuation tokens interspersed with words are ignored."""
+    assert word_frequencies("hello ... world ??? : python !") == {
+        "hello": 1,
+        "world": 1,
+        "python": 1,
+    }
 
 
 def test_mixed_sentence_with_punctuation_and_aggregation():

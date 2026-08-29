@@ -15,8 +15,13 @@ def test_single_space():
 
 
 def test_mixed_whitespace():
-    """Verify that mixed whitespace (tab, newline, spaces) returns an empty dictionary."""
+    """Verify that mixed whitespace (tab, newline, spaces, carriage returns) returns an empty dictionary."""
     assert word_frequencies(" \t\n \r\n\t ") == {}
+
+
+def test_whitespace_with_punctuation():
+    """Verify that whitespace containing only punctuation marks returns an empty dictionary."""
+    assert word_frequencies(" \t!?,.:;\"'()[]{}<>\n\r ") == {}
 
 
 def test_punctuation_only():

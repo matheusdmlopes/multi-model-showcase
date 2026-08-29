@@ -59,3 +59,12 @@ def test_no_state_accumulation_between_calls():
     assert result == {"unique2": 1}
     # Ensure calling again with original key gives correct count
     assert normalize_counts(word_frequencies("unique1")) == {"unique1": 1}
+
+def test_idempotence_after_other_calls():
+    # Call with first input
+    first = normalize_counts(word_frequencies("alpha beta"))
+    # Call with different input
+    _ = word_frequencies("gamma delta")
+    # Call again with first input; should match original result
+    second = normalize_counts(word_frequencies("alpha beta"))
+    assert first == second

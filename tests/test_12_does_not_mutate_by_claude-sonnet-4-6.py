@@ -47,3 +47,30 @@ def test_mutating_returned_dict_does_not_affect_future_calls():
     assert result2 == {"cat": 2, "dog": 1}, (
         "Mutating a previously returned dict must not affect subsequent calls"
     )
+
+
+def test_returned_dict_is_fresh_for_different_inputs():
+    """Each call with a different input must also return a new dict object."""
+    result_a = word_frequencies("one two three")
+    result_b = word_frequencies("four five six")
+    assert result_a is not result_b, (
+        "Calls with different inputs must return distinct dict objects"
+    )
+
+
+def test_results_from_different_inputs_are_independent():
+    """Mutating the result of one call must not affect the result of a call with different input."""
+    text_a = "foo bar foo"
+    text_b = "baz qux baz"
+
+    result_a = word_frequencies(text_a)
+    # Aggressively mutate result_a
+    result_a["foo"] = 999
+    result_a["injected"] = 1
+    result_a.clear()
+
+    # Result for a completely different input must be unaffected
+    result_b = word_frequencies(text_b)
+    assert result_b == {"baz": 2, "qux": 1}, (
+        "Mutating one call's result must not affect results from calls with different input"
+    )

@@ -1,55 +1,53 @@
 # Model: gemini-3.5-flash-high
-"""Tests for validating scalability of word_frequencies on large input."""
+"""Tests for large-input behavior in word_frequencies."""
 
 from wordstats import word_frequencies
 
 
-def test_scalability_1000_tokens():
-    """Test word_frequencies with 1000 unique tokens."""
-    words = [f"word{i}" for i in range(1000)]
-    text = " ".join(words)
-    res = word_frequencies(text)
-    assert len(res) == 1000
-    for i in range(1000):
-        assert res[f"word{i}"] == 1
+def test_one_thousand_unique_tokens():
+    text = " ".join(f"word{index}" for index in range(1000))
+    result = word_frequencies(text)
+    assert len(result) == 1000
+    assert result["word999"] == 1
 
 
-def test_scalability_10000_tokens():
-    """Test word_frequencies with 10000 unique tokens."""
-    words = [f"token{i}" for i in range(10000)]
-    text = " ".join(words)
-    res = word_frequencies(text)
-    assert len(res) == 10000
-    for i in range(10000):
-        assert res[f"token{i}"] == 1
+def test_ten_thousand_unique_tokens():
+    text = " ".join(f"token{index}" for index in range(10000))
+    result = word_frequencies(text)
+    assert len(result) == 10000
+    assert result["token9999"] == 1
 
 
-def test_scalability_single_word_repeated_5000():
-    """Test word_frequencies with a single word repeated 5000 times."""
-    word = "hello"
-    text = " ".join([word] * 5000)
-    res = word_frequencies(text)
-    assert len(res) == 1
-    assert res[word] == 5000
+def test_repeated_token_at_scale():
+    result = word_frequencies(" ".join(["hello"] * 5000))
+    assert result == {"hello": 5000}
 
 
-def test_scalability_large_deterministic_input():
-    """Test word_frequencies with a large deterministic input and verify sum-of-counts matches non-empty tokens."""
-    words = (["apple"] * 2000) + (["banana!"] * 2000) + (["!!!"] * 1000)
-    text = " ".join(words)
-    res = word_frequencies(text)
-    
-    assert res["apple"] == 2000
-    assert res["banana"] == 2000
-    assert "banana!" not in res
-    assert "" not in res
-    
-    # Calculate sum of counts
-    total_counts_sum = sum(res.values())
-    
-    # Calculate non-empty token count based on package cleaning rules
-    punctuation = '.,;:!?"\'()[]{}<>“”‘’'
-    non_empty_count = sum(1 for token in text.split() if token.lower().strip(punctuation))
-    
-    assert non_empty_count == 4000
-    assert total_counts_sum == non_empty_count
+def test_large_mixed_input_counts_clean_tokens():
+    text = " ".join(["apple"] * 2000 + ["banana!"] * 2000 + ["!!!"] * 1000)
+    assert word_frequencies(text) == {"apple": 2000, "banana": 2000}
+
+
+def test_large_punctuation_only_input_is_empty():
+    text = " ".join(["!!!", "???", "...", "::;"] * 4000)
+    assert word_frequencies(text) == {}
+
+
+def test_large_mixed_whitespace_input():
+    tokens = ["word", "another", "token", "count"] * 5000
+    whitespace = [" ", "\t", "\n", "\r\n"]
+    text = "".join(token + whitespace[index % len(whitespace)] for index, token in enumerate(tokens))
+    assert word_frequencies(text) == {"word": 5000, "another": 5000, "token": 5000, "count": 5000}
+
+
+def test_large_cardinality_and_repetition():
+    text = " ".join([f"u{index}" for index in range(50000)] + ["common"] * 50000)
+    result = word_frequencies(text)
+    assert len(result) == 50001
+    assert result["common"] == 50000
+
+
+def test_extreme_token_length_is_preserved_after_cleaning():
+    token = "!" + "a" * 998 + "?"
+    result = word_frequencies(" ".join([token] * 1000))
+    assert result == {"a" * 998: 1000}

@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -55,12 +56,181 @@ FORBIDDEN_FIELDS = {
     "api_key",
 }
 
+TELEMETRY_REQUIRED_FIELDS = {
+    "worker_id",
+    "tool",
+    "model",
+    "task_type",
+    "execution_mode",
+    "status",
+    "returncode",
+    "duration_seconds",
+    "num_turns",
+    "usage",
+}
+
+USAGE_REQUIRED_FIELDS = {
+    "input_tokens",
+    "output_tokens",
+    "thinking_tokens",
+    "cache_read_tokens",
+    "total_tokens",
+}
+
+TELEMETRY_FORBIDDEN_FIELDS = FORBIDDEN_FIELDS - {"usage"}
+
+CROSS_FILE_EQUAL_FIELDS = {
+    "worker_id",
+    "model",
+    "execution_mode",
+    "status",
+    "returncode",
+    "duration_seconds",
+    "num_turns",
+}
+
 
 @dataclass
 class VerificationResult:
     is_valid: bool
     errors: list[str] = field(default_factory=list)
     records: list[dict[str, Any]] = field(default_factory=list)
+
+
+def _append_field_allowlist_errors(
+    errors: list[str],
+    prefix: str,
+    actual_fields: set[str],
+    required_fields: set[str],
+    forbidden_fields: set[str],
+) -> None:
+    """Append missing, unexpected, and forbidden field errors."""
+    missing = required_fields - actual_fields
+    if missing:
+        errors.append(
+            f"{prefix}: missing required field(s): {', '.join(sorted(missing))}"
+        )
+
+    forbidden_present = actual_fields & forbidden_fields
+    if forbidden_present:
+        errors.append(
+            f"{prefix}: contains forbidden field(s): {', '.join(sorted(forbidden_present))}"
+        )
+
+    unexpected = actual_fields - required_fields - forbidden_fields
+    if unexpected:
+        errors.append(
+            f"{prefix}: contains unexpected field(s): {', '.join(sorted(unexpected))}"
+        )
+
+
+def _is_non_empty_string(value: Any) -> bool:
+    return isinstance(value, str) and bool(value.strip())
+
+
+def _is_non_negative_integer(value: Any) -> bool:
+    return isinstance(value, int) and not isinstance(value, bool) and value >= 0
+
+
+def verify_telemetry(
+    records: Any,
+    *,
+    expected_count: int | None = None,
+) -> VerificationResult:
+    """Verify sanitized in-memory delegate_agy telemetry records."""
+    if not isinstance(records, list):
+        return VerificationResult(
+            is_valid=False,
+            errors=[f"Telemetry content must be a JSON list, got {type(records).__name__}"],
+            records=[],
+        )
+
+    errors: list[str] = []
+    if expected_count is not None and len(records) != expected_count:
+        errors.append(f"Expected exactly {expected_count} telemetry records, found {len(records)}")
+
+    seen_workers: set[str] = set()
+    seen_models: set[str] = set()
+
+    for index, item in enumerate(records):
+        prefix = f"Telemetry record [{index}]"
+        if not isinstance(item, dict):
+            errors.append(f"{prefix}: entry must be a dictionary, got {type(item).__name__}")
+            continue
+
+        worker_id = item.get("worker_id")
+        if _is_non_empty_string(worker_id):
+            prefix = f"{prefix} ({worker_id})"
+            if worker_id in seen_workers:
+                errors.append(f"{prefix}: duplicate worker_id '{worker_id}'")
+            seen_workers.add(worker_id)
+        else:
+            errors.append(f"{prefix}: worker_id must be a non-empty string")
+
+        _append_field_allowlist_errors(
+            errors,
+            prefix,
+            set(item),
+            TELEMETRY_REQUIRED_FIELDS,
+            TELEMETRY_FORBIDDEN_FIELDS,
+        )
+
+        model = item.get("model")
+        if _is_non_empty_string(model):
+            if model in seen_models:
+                errors.append(f"{prefix}: duplicate model '{model}'")
+            seen_models.add(model)
+        else:
+            errors.append(f"{prefix}: model must be a non-empty string")
+
+        if item.get("tool") != "delegate_agy":
+            errors.append(f"{prefix}: tool must be 'delegate_agy'")
+        if not _is_non_empty_string(item.get("task_type")):
+            errors.append(f"{prefix}: task_type must be a non-empty string")
+        if item.get("execution_mode") != "accept_edits":
+            errors.append(f"{prefix}: execution_mode must be 'accept_edits'")
+        if item.get("status") != "succeeded":
+            errors.append(f"{prefix}: status must be 'succeeded'")
+        if item.get("returncode") != 0 or isinstance(item.get("returncode"), bool):
+            errors.append(f"{prefix}: returncode must be integer 0")
+
+        duration = item.get("duration_seconds")
+        if (
+            not isinstance(duration, (int, float))
+            or isinstance(duration, bool)
+            or not math.isfinite(duration)
+            or duration < 0
+        ):
+            errors.append(f"{prefix}: duration_seconds must be a non-negative finite number")
+
+        num_turns = item.get("num_turns")
+        if not isinstance(num_turns, int) or isinstance(num_turns, bool) or num_turns <= 0:
+            errors.append(f"{prefix}: num_turns must be a positive integer")
+
+        usage = item.get("usage")
+        if not isinstance(usage, dict):
+            errors.append(f"{prefix}: usage must be a dictionary")
+            continue
+
+        _append_field_allowlist_errors(
+            errors,
+            f"{prefix}: usage",
+            set(usage),
+            USAGE_REQUIRED_FIELDS,
+            TELEMETRY_FORBIDDEN_FIELDS,
+        )
+        for field_name in USAGE_REQUIRED_FIELDS:
+            value = usage.get(field_name)
+            if not _is_non_negative_integer(value):
+                errors.append(
+                    f"{prefix}: usage.{field_name} must be a non-negative integer"
+                )
+
+    return VerificationResult(
+        is_valid=not errors,
+        errors=errors,
+        records=records,
+    )
 
 
 def verify_manifest(
@@ -236,9 +406,98 @@ def verify_evidence_file(
     return verify_manifest(data, repo_root=repo_root)
 
 
+def verify_telemetry_file(telemetry_path: Path | str) -> VerificationResult:
+    """Load telemetry from a JSON file and verify its public schema."""
+    telemetry_path = Path(telemetry_path)
+    if not telemetry_path.is_file():
+        return VerificationResult(
+            is_valid=False,
+            errors=[f"Telemetry file not found: {telemetry_path}"],
+            records=[],
+        )
+
+    try:
+        with open(telemetry_path, "r", encoding="utf-8") as file_handle:
+            data = json.load(file_handle)
+    except Exception as error:
+        return VerificationResult(
+            is_valid=False,
+            errors=[f"Failed to parse JSON from {telemetry_path}: {error}"],
+            records=[],
+        )
+
+    return verify_telemetry(data, expected_count=EXPECTED_COUNT)
+
+
+def verify_evidence_bundle(
+    manifest_records: Any,
+    telemetry_records: Any,
+    *,
+    repo_root: Path | str,
+) -> VerificationResult:
+    """Verify manifest and telemetry records together as one evidence bundle."""
+    manifest_result = verify_manifest(manifest_records, repo_root=repo_root)
+    telemetry_result = verify_telemetry(telemetry_records, expected_count=EXPECTED_COUNT)
+    errors = [*manifest_result.errors, *telemetry_result.errors]
+
+    if not isinstance(manifest_records, list) or not isinstance(telemetry_records, list):
+        return VerificationResult(
+            is_valid=False,
+            errors=errors,
+            records=manifest_result.records,
+        )
+
+    manifest_by_model = {
+        record.get("model"): record
+        for record in manifest_records
+        if isinstance(record, dict) and _is_non_empty_string(record.get("model"))
+    }
+    telemetry_by_model = {
+        record.get("model"): record
+        for record in telemetry_records
+        if isinstance(record, dict) and _is_non_empty_string(record.get("model"))
+    }
+
+    manifest_models = set(manifest_by_model)
+    telemetry_models = set(telemetry_by_model)
+    for model in sorted(manifest_models - telemetry_models):
+        errors.append(f"Cross-file mismatch: manifest model '{model}' is missing from telemetry")
+    for model in sorted(telemetry_models - manifest_models):
+        errors.append(f"Cross-file mismatch: telemetry model '{model}' is missing from manifest")
+
+    for model in sorted(manifest_models & telemetry_models):
+        manifest_record = manifest_by_model[model]
+        telemetry_record = telemetry_by_model[model]
+        for field_name in sorted(CROSS_FILE_EQUAL_FIELDS):
+            if manifest_record.get(field_name) != telemetry_record.get(field_name):
+                errors.append(
+                    f"Cross-file mismatch for model '{model}': {field_name} differs"
+                )
+
+    return VerificationResult(
+        is_valid=not errors,
+        errors=errors,
+        records=manifest_result.records,
+    )
+
+
+def _print_errors(label: str, errors: list[str]) -> None:
+    print(f"FAILED: {label} ({len(errors)} error(s)):", file=sys.stderr)
+    for error in errors:
+        print(f"  - {error}", file=sys.stderr)
+
+
+def _usage_totals(records: list[dict[str, Any]]) -> dict[str, int]:
+    """Return aggregate usage counters from telemetry already validated by the caller."""
+    return {
+        field_name: sum(record["usage"][field_name] for record in records)
+        for field_name in sorted(USAGE_REQUIRED_FIELDS)
+    }
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Verify delegate_agy evidence manifest integrity."
+        description="Verify delegate_agy manifest and telemetry evidence integrity."
     )
     parser.add_argument(
         "manifest",
@@ -251,23 +510,46 @@ def main(argv: Sequence[str] | None = None) -> int:
         default=None,
         help="Path to repository root (defaults to inferred root)",
     )
+    parser.add_argument(
+        "--telemetry",
+        default=None,
+        help="Path to telemetry.json (defaults to the manifest sibling)",
+    )
 
     args = parser.parse_args(argv)
     manifest_path = Path(args.manifest)
+    telemetry_path = Path(args.telemetry) if args.telemetry else manifest_path.with_name("telemetry.json")
     repo_root = Path(args.repo_root) if args.repo_root else None
 
-    result = verify_evidence_file(manifest_path, repo_root=repo_root)
-
-    if not result.is_valid:
-        print(f"FAILED: Evidence verification failed ({len(result.errors)} error(s)):", file=sys.stderr)
-        for err in result.errors:
-            print(f"  - {err}", file=sys.stderr)
+    manifest_result = verify_evidence_file(manifest_path, repo_root=repo_root)
+    telemetry_result = verify_telemetry_file(telemetry_path)
+    if not manifest_result.is_valid or not telemetry_result.is_valid:
+        if not manifest_result.is_valid:
+            _print_errors("Manifest validation failed", manifest_result.errors)
+        if not telemetry_result.is_valid:
+            _print_errors("Telemetry validation failed", telemetry_result.errors)
         return 1
 
+    bundle_repo_root = repo_root or manifest_path.resolve().parent.parent
+    result = verify_evidence_bundle(
+        manifest_result.records,
+        telemetry_result.records,
+        repo_root=bundle_repo_root,
+    )
+
+    if not result.is_valid:
+        _print_errors("Cross-file evidence validation failed", result.errors)
+        return 1
+
+    totals = _usage_totals(telemetry_result.records)
     print(
-        f"SUCCESS: All {len(result.records)} worker evidence records verified successfully.\n"
+        f"SUCCESS: All {len(result.records)} manifest records and "
+        f"{len(telemetry_result.records)} telemetry records verified successfully.\n"
         f"Manifest: {manifest_path}\n"
-        f"Verified: status=succeeded, returncode=0, execution_mode=accept_edits, valid headers & sha256."
+        f"Telemetry: {telemetry_path}\n"
+        f"Verified: status=succeeded, returncode=0, execution_mode=accept_edits, valid headers & sha256.\n"
+        "Aggregate usage: "
+        + ", ".join(f"{field_name}={totals[field_name]}" for field_name in sorted(totals))
     )
     return 0
 

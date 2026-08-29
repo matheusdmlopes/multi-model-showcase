@@ -22,3 +22,13 @@ def test_every_character_uppercase_input():
 def test_case_insensitive_aggregation_across_many_repetitions():
     """Verify case-insensitive aggregation across multiple varied-case repetitions."""
     assert word_frequencies("apple Apple aPPLe") == {"apple": 3}
+
+
+def test_mixed_case_with_punctuation_and_whitespace():
+    """Verify that casing is normalized when tokens are mixed with punctuation and extra whitespace."""
+    assert word_frequencies("  Python! pYtHoN, PYTHON...  ") == {"python": 3}
+
+
+def test_mixed_case_unicode_characters():
+    """Verify that unicode characters in mixed case are lowercased correctly."""
+    assert word_frequencies("Café CAFÉ café") == {"café": 3}
