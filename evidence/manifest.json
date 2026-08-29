@@ -1,0 +1,156 @@
+[
+  {
+    "worker_id": "agy_8d2f869a6aeb",
+    "model": "gemini-3.7-flash-low",
+    "status": "succeeded",
+    "returncode": 0,
+    "execution_mode": "accept_edits",
+    "duration_seconds": 24.150980555,
+    "num_turns": 1,
+    "file": "tests/test_01_lowercase_by_gemini-3.7-flash-low.py",
+    "sha256": "ba4bbf4a961628684bc4854bcafc5e67f5f04ce6ef640878243ceb0b8ade42a0"
+  },
+  {
+    "worker_id": "agy_53c1caf5d8a3",
+    "model": "gemini-3.7-flash-medium",
+    "status": "succeeded",
+    "returncode": 0,
+    "execution_mode": "accept_edits",
+    "duration_seconds": 21.356456653,
+    "num_turns": 1,
+    "file": "tests/test_02_punctuation_by_gemini-3.7-flash-medium.py",
+    "sha256": "99c82bf3047dc63cf6a3f635e543950553f272b287ae8a661ed855b64927f5f6"
+  },
+  {
+    "worker_id": "agy_dcd3df8a7d59",
+    "model": "gemini-3.7-flash-high",
+    "status": "succeeded",
+    "returncode": 0,
+    "execution_mode": "accept_edits",
+    "duration_seconds": 25.939500246,
+    "num_turns": 1,
+    "file": "tests/test_03_sorting_by_gemini-3.7-flash-high.py",
+    "sha256": "8d2da72158dc74c8e4ac0a401bd9fb059a8be7c78299b698368d2c13921b63bd"
+  },
+  {
+    "worker_id": "agy_f346487b88cc",
+    "model": "gemini-3.6-flash-low",
+    "status": "succeeded",
+    "returncode": 0,
+    "execution_mode": "accept_edits",
+    "duration_seconds": 7.78654802,
+    "num_turns": 1,
+    "file": "tests/test_04_empty_by_gemini-3.6-flash-low.py",
+    "sha256": "7477265bd455d98c77c238391eac5fa4f54c7de8be0af2506e31a8e4a1612c37"
+  },
+  {
+    "worker_id": "agy_a844d3170956",
+    "model": "gemini-3.6-flash-medium",
+    "status": "succeeded",
+    "returncode": 0,
+    "execution_mode": "accept_edits",
+    "duration_seconds": 13.46745864,
+    "num_turns": 1,
+    "file": "tests/test_05_unicode_by_gemini-3.6-flash-medium.py",
+    "sha256": "3f7071323698ee3780983d5a2766be27d5b82fc2020a963cf85efd3fc38b8bb6"
+  },
+  {
+    "worker_id": "agy_904eaa0d00b3",
+    "model": "gemini-3.6-flash-high",
+    "status": "succeeded",
+    "returncode": 0,
+    "execution_mode": "accept_edits",
+    "duration_seconds": 12.145913398,
+    "num_turns": 1,
+    "file": "tests/test_06_hyphenated_by_gemini-3.6-flash-high.py",
+    "sha256": "4d9c2ddb1c1b68aafd9df52b3bc2cec7b93447e2805fe75bfa4868c71388a5d8"
+  },
+  {
+    "worker_id": "agy_58b106a89b96",
+    "model": "gemini-3.5-flash-low",
+    "status": "succeeded",
+    "returncode": 0,
+    "execution_mode": "accept_edits",
+    "duration_seconds": 10.190062801,
+    "num_turns": 1,
+    "file": "tests/test_07_numbers_by_gemini-3.5-flash-low.py",
+    "sha256": "ee08b047d2c3f4e72b752b0e543170c297eb175076fff291e796c42414ed427f"
+  },
+  {
+    "worker_id": "agy_70f4f8478982",
+    "model": "gemini-3.5-flash-medium",
+    "status": "succeeded",
+    "returncode": 0,
+    "execution_mode": "accept_edits",
+    "duration_seconds": 12.708777495,
+    "num_turns": 1,
+    "file": "tests/test_08_determinism_by_gemini-3.5-flash-medium.py",
+    "sha256": "b178af01ebc95ef18a4958f03cec1d828bd3a9fb3728531bb9b82ea9f2673f71"
+  },
+  {
+    "worker_id": "agy_2bfbc6100385",
+    "model": "gemini-3.5-flash-high",
+    "status": "succeeded",
+    "returncode": 0,
+    "execution_mode": "accept_edits",
+    "duration_seconds": 14.498915605,
+    "num_turns": 1,
+    "file": "tests/test_09_long_text_by_gemini-3.5-flash-high.py",
+    "sha256": "5c6fe404152c9ce78e165da9f415e4aac5990c159461322fb5dc9d0352653bd8"
+  },
+  {
+    "worker_id": "agy_886a0b3d1a26",
+    "model": "gemini-3.1-pro-high",
+    "status": "succeeded",
+    "returncode": 0,
+    "execution_mode": "accept_edits",
+    "duration_seconds": 31.054804683,
+    "num_turns": 1,
+    "file": "tests/test_10_cli_format_by_gemini-3.1-pro-high.py",
+    "sha256": "6aad416881234974f8d546551f9fc47017a3530f62b2e05357781b561101885c"
+  },
+  {
+    "worker_id": "agy_b14443f95cec",
+    "model": "gemini-3.1-pro-low",
+    "status": "succeeded",
+    "returncode": 0,
+    "execution_mode": "accept_edits",
+    "duration_seconds": 33.664812574,
+    "num_turns": 1,
+    "file": "tests/test_11_quotes_by_gemini-3.1-pro-low.py",
+    "sha256": "3c214bff1c751c5a30f3de7234dc51b918081543da26073eade2a7d2aca01cbe"
+  },
+  {
+    "worker_id": "agy_0a1ff6bc5c21",
+    "model": "claude-sonnet-4-6",
+    "status": "succeeded",
+    "returncode": 0,
+    "execution_mode": "accept_edits",
+    "duration_seconds": 33.282723917,
+    "num_turns": 1,
+    "file": "tests/test_12_does_not_mutate_by_claude-sonnet-4-6.py",
+    "sha256": "95a7f6a715eb2ef8925bcf5c6e5c22a862870b0559cccf1708763984062bf8bd"
+  },
+  {
+    "worker_id": "agy_d2922c2eff7d",
+    "model": "claude-opus-4-6-thinking",
+    "status": "succeeded",
+    "returncode": 0,
+    "execution_mode": "accept_edits",
+    "duration_seconds": 35.95362283,
+    "num_turns": 1,
+    "file": "tests/test_13_signature_by_claude-opus-4-6-thinking.py",
+    "sha256": "33fa962c07b07636a360a144a8b2c7ff424b5166c32146abc53f97c7170b2fb0"
+  },
+  {
+    "worker_id": "agy_772f336c5b18",
+    "model": "gpt-oss-120b-medium",
+    "status": "succeeded",
+    "returncode": 0,
+    "execution_mode": "accept_edits",
+    "duration_seconds": 34.632497081,
+    "num_turns": 1,
+    "file": "tests/test_14_idempotent_keys_by_gpt-oss-120b-medium.py",
+    "sha256": "79cdac9a983f6b64884d6ed052ac572644e70e71cc5a5ccb0f2108b25197d5c0"
+  }
+]

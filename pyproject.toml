@@ -10,6 +10,11 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = []
 
+[project.optional-dependencies]
+test = [
+    "pytest>=8,<10",
+]
+
 [project.scripts]
 wordstats = "wordstats.cli:main"
 
@@ -18,5 +23,4 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 addopts = "--import-mode=importlib"
-pythonpath = ["src"]
-
+pythonpath = [".", "src"]
